@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CircleDot, Trophy, Search } from 'lucide-react'
+import { CircleDot, Trophy, Search, Gamepad2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { Badge } from '@/shared/ui/badge'
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
+import { PlayerCard } from '@/shared/ui/player-card'
 import { ErrorState, LoadingState, EmptyState } from '@/shared/ui/states'
 import { useXboxLibrary, useXboxStats } from '@/shared/hooks/useXbox'
 import { formatNumber } from '@/shared/lib/format'
@@ -53,6 +54,12 @@ export function XboxPage() {
   if (libLoading) return <LoadingState />
   if (libError) return <ErrorState onRetry={refetch} />
 
+  const profileStats = [
+    { label: t('profile.total_games'), value: stats?.toplam_oyun ?? 0, icon: Gamepad2 },
+    { label: t('profile.gamerscore'), value: formatNumber(stats?.toplam_gamerscore ?? 0), icon: Trophy },
+    { label: t('profile.achievements'), value: formatNumber(stats?.toplam_basari ?? 0), icon: Trophy },
+  ]
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
@@ -60,7 +67,7 @@ export function XboxPage() {
         <div className="mt-1 h-0.5 w-8 bg-red-500" />
       </div>
 
-      {/* Change XUID */}
+      {/* XUID Input */}
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-2">
@@ -71,34 +78,21 @@ export function XboxPage() {
         </CardContent>
       </Card>
 
-      {/* Stats */}
-      {stats && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('common.games')}</p>
-              <p className="mt-1 text-2xl font-bold text-white">{stats.toplam_oyun}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('xbox.gamerscore')}</p>
-              <p className="mt-1 text-2xl font-bold text-white">{formatNumber(stats.toplam_gamerscore)}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('xbox.achievements')}</p>
-              <p className="mt-1 text-2xl font-bold text-white">{formatNumber(stats.toplam_basari)}</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {/* Premium Player Card */}
+      <PlayerCard
+        platform="xbox"
+        username={xuid}
+        isOnline={false}
+        stats={profileStats}
+      />
 
       {/* Library */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('xbox.library')}</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <CircleDot className="h-5 w-5 text-red-500" />
+            {t('xbox.library')}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {library && library.length > 0 ? (
@@ -106,11 +100,11 @@ export function XboxPage() {
               {library.map((game) => (
                 <div
                   key={game.title_id ?? game.name}
-                  className="flex items-center justify-between rounded-lg p-3 hover:bg-white/[0.02] transition-colors"
+                  className="group flex items-center justify-between rounded-lg p-3 hover:bg-white/[0.02] transition-all duration-150 border border-transparent hover:border-white/5"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5">
-                      <CircleDot className="h-5 w-5 text-[#71717A]" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 group-hover:bg-red-500/10 transition-colors">
+                      <CircleDot className="h-5 w-5 text-[#52525B] group-hover:text-red-500/60 transition-colors" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-white">{game.name}</p>
@@ -119,12 +113,12 @@ export function XboxPage() {
                   </div>
                   <div className="text-right">
                     {game.achievement && (
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5">
                         <Trophy className="h-3.5 w-3.5 text-yellow-500" />
                         <span className="text-sm font-mono text-white">
                           {game.achievement.current_gamescore}
                         </span>
-                        <span className="text-xs text-[#71717A]">
+                        <span className="text-xs text-[#52525B]">
                           / {game.achievement.total_gamescore}
                         </span>
                       </div>

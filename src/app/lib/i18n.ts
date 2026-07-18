@@ -132,6 +132,18 @@ const resources = {
       'common.connected': 'Bağlı',
       'common.not_connected': 'Bağlı Değil',
 
+      // Profile
+      'profile.online': 'Çevrimiçi',
+      'profile.offline': 'Çevrimdışı',
+      'profile.total_games': 'Toplam Oyun',
+      'profile.total_playtime': 'Toplam Süre',
+      'profile.most_played': 'En Çok Oynanan',
+      'profile.gamerscore': 'Gamerscore',
+      'profile.achievements': 'Başarımlar',
+      'profile.trophy_level': 'Ödül Seviyesi',
+      'profile.total_trophies': 'Toplam Ödül',
+      'profile.platform_games': 'Platform Oyunları',
+
       // Settings
       'settings.title': 'Ayarlar',
       'settings.language': 'Dil',
@@ -257,6 +269,19 @@ const resources = {
       'common.saved': 'Saved',
       'common.connected': 'Connected',
       'common.not_connected': 'Not Connected',
+
+      // Profile
+      'profile.online': 'Online',
+      'profile.offline': 'Offline',
+      'profile.total_games': 'Total Games',
+      'profile.total_playtime': 'Total Playtime',
+      'profile.most_played': 'Most Played',
+      'profile.gamerscore': 'Gamerscore',
+      'profile.achievements': 'Achievements',
+      'profile.trophy_level': 'Trophy Level',
+      'profile.total_trophies': 'Total Trophies',
+      'profile.platform_games': 'Platform Games',
+
       'settings.title': 'Settings',
       'settings.language': 'Language',
       'settings.theme': 'Theme',

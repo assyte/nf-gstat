@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { Badge } from '@/shared/ui/badge'
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
+import { PlayerCard } from '@/shared/ui/player-card'
 import { ErrorState, LoadingState, EmptyState } from '@/shared/ui/states'
 import { usePlayStationLibrary, usePlayStationStats } from '@/shared/hooks/usePlayStation'
 
@@ -52,6 +53,14 @@ export function PlayStationPage() {
   if (libLoading) return <LoadingState />
   if (libError) return <ErrorState onRetry={refetch} />
 
+  const totalTrophies = stats ? stats.platinum_sayisi + stats.gold_sayisi + stats.silver_sayisi + stats.bronze_sayisi : 0
+
+  const profileStats = [
+    { label: t('profile.total_games'), value: stats?.toplam_oyun ?? 0, icon: Gamepad },
+    { label: t('profile.trophy_level'), value: stats?.trophy_level ?? 0, icon: Gamepad },
+    { label: t('profile.total_trophies'), value: totalTrophies, icon: Gamepad },
+  ]
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
@@ -59,6 +68,7 @@ export function PlayStationPage() {
         <div className="mt-1 h-0.5 w-8 bg-red-500" />
       </div>
 
+      {/* Account ID Input */}
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-2">
@@ -69,44 +79,43 @@ export function PlayStationPage() {
         </CardContent>
       </Card>
 
-      {stats && (
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('playstation.trophy_level')}</p>
-              <p className="mt-1 text-2xl font-bold text-white">{stats.trophy_level}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('playstation.platinum')}</p>
-              <p className="mt-1 text-2xl font-bold text-[#E5E4E2]">{stats.platinum_sayisi}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('playstation.gold')}</p>
-              <p className="mt-1 text-2xl font-bold text-yellow-500">{stats.gold_sayisi}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('playstation.silver')}</p>
-              <p className="mt-1 text-2xl font-bold text-gray-400">{stats.silver_sayisi}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('playstation.bronze')}</p>
-              <p className="mt-1 text-2xl font-bold text-amber-700">{stats.bronze_sayisi}</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {/* Premium Player Card */}
+      <PlayerCard
+        platform="playstation"
+        username={accountId}
+        isOnline={false}
+        stats={profileStats}
+      >
+        {/* Trophy Breakdown as children */}
+        {stats && totalTrophies > 0 && (
+          <div className="grid grid-cols-4 gap-3">
+            <div className="rounded-lg bg-white/[0.03] border border-white/5 p-3 text-center">
+              <p className="text-xl font-bold text-[#E5E4E2]">{stats.platinum_sayisi}</p>
+              <p className="text-[10px] text-[#71717A] uppercase tracking-wider">{t('playstation.platinum')}</p>
+            </div>
+            <div className="rounded-lg bg-white/[0.03] border border-white/5 p-3 text-center">
+              <p className="text-xl font-bold text-yellow-500">{stats.gold_sayisi}</p>
+              <p className="text-[10px] text-[#71717A] uppercase tracking-wider">{t('playstation.gold')}</p>
+            </div>
+            <div className="rounded-lg bg-white/[0.03] border border-white/5 p-3 text-center">
+              <p className="text-xl font-bold text-gray-400">{stats.silver_sayisi}</p>
+              <p className="text-[10px] text-[#71717A] uppercase tracking-wider">{t('playstation.silver')}</p>
+            </div>
+            <div className="rounded-lg bg-white/[0.03] border border-white/5 p-3 text-center">
+              <p className="text-xl font-bold text-amber-700">{stats.bronze_sayisi}</p>
+              <p className="text-[10px] text-[#71717A] uppercase tracking-wider">{t('playstation.bronze')}</p>
+            </div>
+          </div>
+        )}
+      </PlayerCard>
 
+      {/* Library */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('playstation.library')}</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Gamepad className="h-5 w-5 text-red-500" />
+            {t('playstation.library')}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {library && library.length > 0 ? (
@@ -114,11 +123,11 @@ export function PlayStationPage() {
               {library.map((game) => (
                 <div
                   key={game.np_title_id}
-                  className="flex items-center justify-between rounded-lg p-3 hover:bg-white/[0.02] transition-colors"
+                  className="group flex items-center justify-between rounded-lg p-3 hover:bg-white/[0.02] transition-all duration-150 border border-transparent hover:border-white/5"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5">
-                      <Gamepad className="h-5 w-5 text-[#71717A]" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 group-hover:bg-red-500/10 transition-colors">
+                      <Gamepad className="h-5 w-5 text-[#52525B] group-hover:text-red-500/60 transition-colors" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-white">{game.trophy_title_name}</p>
@@ -129,11 +138,11 @@ export function PlayStationPage() {
                   </div>
                   <div className="text-right">
                     {game.earned_trophies && (
-                      <div className="flex items-center gap-1.5 text-xs">
-                        <span className="text-[#E5E4E2]">P{game.earned_trophies.platinum}</span>
-                        <span className="text-yellow-500">G{game.earned_trophies.gold}</span>
-                        <span className="text-gray-400">S{game.earned_trophies.silver}</span>
-                        <span className="text-amber-700">B{game.earned_trophies.bronze}</span>
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-[#E5E4E2] font-medium">{game.earned_trophies.platinum}P</span>
+                        <span className="text-yellow-500 font-medium">{game.earned_trophies.gold}G</span>
+                        <span className="text-gray-400 font-medium">{game.earned_trophies.silver}S</span>
+                        <span className="text-amber-700 font-medium">{game.earned_trophies.bronze}B</span>
                       </div>
                     )}
                   </div>

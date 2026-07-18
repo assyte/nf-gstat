@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Gamepad2, Search, Wifi, WifiOff } from 'lucide-react'
+import { Gamepad2, Search, Clock, Trophy, Gamepad } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
+import { PlayerCard } from '@/shared/ui/player-card'
 import { ErrorState, LoadingState, EmptyState } from '@/shared/ui/states'
 import { useSteamUser, useSteamLibrary, useSteamStats } from '@/shared/hooks/useSteam'
 import { formatPlaytimeHours } from '@/shared/lib/format'
@@ -57,6 +58,12 @@ export function SteamPage() {
   if (userLoading || libLoading) return <LoadingState />
   if (libError) return <ErrorState onRetry={refetch} />
 
+  const profileStats = [
+    { label: t('profile.total_games'), value: stats?.toplam_oyun ?? 0, icon: Gamepad2 },
+    { label: t('profile.total_playtime'), value: stats?.toplam_sure_dakika ? formatPlaytimeHours(Math.round(stats.toplam_sure_dakika)) : '--', icon: Clock },
+    { label: t('profile.most_played'), value: stats?.en_cok_oynanan?.ad?.slice(0, 15) ?? '--', icon: Trophy },
+  ]
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
@@ -64,7 +71,7 @@ export function SteamPage() {
         <div className="mt-1 h-0.5 w-8 bg-red-500" />
       </div>
 
-      {/* Change Steam ID */}
+      {/* Steam ID Input */}
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-2">
@@ -80,61 +87,25 @@ export function SteamPage() {
         </CardContent>
       </Card>
 
-      {/* Profile */}
+      {/* Premium Player Card */}
       {user && (
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center gap-4">
-              {user.avatar_url && (
-                <img src={user.avatar_url} alt="" className="h-16 w-16 rounded-xl" />
-              )}
-              <div className="flex-1">
-                <p className="text-lg font-bold text-white">{user.kullanici_adi}</p>
-                {user.tam_ad && <p className="text-sm text-[#A1A1AA]">{user.tam_ad}</p>}
-                <div className="mt-1 flex items-center gap-2">
-                  {user.online_state === 'online' ? (
-                    <Wifi className="h-3.5 w-3.5 text-green-500" />
-                  ) : (
-                    <WifiOff className="h-3.5 w-3.5 text-[#71717A]" />
-                  )}
-                  <span className="text-xs text-[#71717A]">
-                    {user.online_state === 'online' ? t('steam.online') : t('steam.offline')}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Stats */}
-      {stats && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('steam.total_games')}</p>
-              <p className="mt-1 text-2xl font-bold text-white">{stats.toplam_oyun}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('steam.total_playtime')}</p>
-              <p className="mt-1 text-2xl font-bold text-white">{formatPlaytimeHours(Math.round(stats.toplam_sure_dakika))}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-5">
-              <p className="text-xs text-[#71717A] uppercase tracking-wider">{t('steam.most_played')}</p>
-              <p className="mt-1 text-lg font-bold text-white truncate">{stats.en_cok_oynanan?.ad ?? '---'}</p>
-            </CardContent>
-          </Card>
-        </div>
+        <PlayerCard
+          platform="steam"
+          username={user.kullanici_adi}
+          fullName={user.tam_ad}
+          avatarUrl={user.avatar_url}
+          isOnline={user.online_state === 'online'}
+          stats={profileStats}
+        />
       )}
 
       {/* Library */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('steam.library')}</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Gamepad className="h-5 w-5 text-red-500" />
+            {t('steam.library')}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {library && library.length > 0 ? (
@@ -142,21 +113,30 @@ export function SteamPage() {
               {library.slice(0, 20).map((game) => (
                 <div
                   key={game.app_id}
-                  className="flex items-center justify-between rounded-lg p-3 hover:bg-white/[0.02] transition-colors"
+                  className="group flex items-center justify-between rounded-lg p-3 hover:bg-white/[0.02] transition-all duration-150 border border-transparent hover:border-white/5"
                 >
                   <div className="flex items-center gap-3">
-                    {game.resim_url && (
-                      <img src={game.resim_url} alt="" className="h-10 w-10 rounded-lg" />
+                    {game.resim_url ? (
+                      <img src={game.resim_url} alt="" className="h-10 w-10 rounded-lg object-cover" />
+                    ) : (
+                      <div className="h-10 w-10 rounded-lg bg-white/5 flex items-center justify-center">
+                        <Gamepad2 className="h-5 w-5 text-[#52525B] group-hover:text-red-500/60 transition-colors" />
+                      </div>
                     )}
                     <div>
                       <p className="text-sm font-medium text-white">{game.ad}</p>
-                      <p className="text-xs text-[#71717A]">App ID: {game.app_id}</p>
+                      <p className="text-xs text-[#52525B]">App ID: {game.app_id}</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-mono text-[#A1A1AA]">
                       {game.oyun_suresi_dakika ? formatPlaytimeHours(Math.round(game.oyun_suresi_dakika)) : '--'}
                     </p>
+                    {game.oyun_suresi_2hafta != null && game.oyun_suresi_2hafta > 0 && (
+                      <p className="text-[10px] text-[#52525B]">
+                        Son 2 hafta: {formatPlaytimeHours(Math.round(game.oyun_suresi_2hafta))}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}

@@ -98,6 +98,7 @@ export const XboxOyunSchema = z.object({
   title_id: z.string().nullable(),
   last_unlock: z.string().nullable(),
   achievement: XboxBasariSchema.nullable(),
+  platform: z.string().nullable(),
 })
 export type XboxOyun = z.infer<typeof XboxOyunSchema>
 
@@ -130,6 +131,58 @@ export const MicrosoftStoreOyunSchema = z.object({
   total_time_played: z.number().nullable(),
 })
 export type MicrosoftStoreOyun = z.infer<typeof MicrosoftStoreOyunSchema>
+
+// === Stats Types ===
+
+export const MinecraftStatsSchema = z.object({
+  toplam_oturum: z.number(),
+  toplam_sure: z.number(),
+  en_cok_kullanilan_mod_loader: z.string().nullable(),
+  mod_loader_kullanimi: z.record(z.string(), z.number()),
+  son_oturumlar: z.array(z.object({
+    baslama_zamani: z.string(),
+    sure: z.number(),
+    mod_loader: z.string(),
+    surum: z.string().nullable(),
+  })),
+})
+export type MinecraftStats = z.infer<typeof MinecraftStatsSchema>
+
+export const XboxStatsSchema = z.object({
+  toplam_oyun: z.number(),
+  toplam_gamerscore: z.number(),
+  toplam_basari: z.number(),
+  basari_orani: z.number(),
+  son_oynananlar: z.array(XboxOyunSchema),
+  kategoriler: z.record(z.string(), z.number()),
+  nadir_basari_sayisi: z.number(),
+})
+export type XboxStats = z.infer<typeof XboxStatsSchema>
+
+export const PlayStationStatsSchema = z.object({
+  toplam_oyun: z.number(),
+  toplam_trophy: z.number(),
+  trophy_level: z.number(),
+  trophy_points: z.number(),
+  platinum_sayisi: z.number(),
+  gold_sayisi: z.number(),
+  silver_sayisi: z.number(),
+  bronze_sayisi: z.number(),
+  son_oynananlar: z.array(PlayStationOyunSchema),
+  kategoriler: z.record(z.string(), z.number()),
+  trophy_orani: z.number(),
+})
+export type PlayStationStats = z.infer<typeof PlayStationStatsSchema>
+
+export const MicrosoftStoreStatsSchema = z.object({
+  toplam_oyun: z.number(),
+  yuklu_oyun: z.number(),
+  toplam_sure: z.number(),
+  son_oynananlar: z.array(MicrosoftStoreOyunSchema),
+  kategoriler: z.record(z.string(), z.number()),
+  uretici_sayisi: z.number(),
+})
+export type MicrosoftStoreStats = z.infer<typeof MicrosoftStoreStatsSchema>
 
 // === Platform Summary ===
 

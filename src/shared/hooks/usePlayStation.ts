@@ -9,3 +9,11 @@ export function usePlayStationLibrary(accountId: string | null) {
     enabled: !!accountId,
   })
 }
+
+export function usePlayStationStats(accountId: string | null) {
+  return useQuery({
+    queryKey: queryKeys.playstation.stats(accountId ?? ''),
+    queryFn: () => playstationApi.getStats(accountId!),
+    enabled: !!accountId,
+  })
+}

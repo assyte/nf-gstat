@@ -9,3 +9,11 @@ export function useXboxLibrary(xuid: string | null) {
     enabled: !!xuid,
   })
 }
+
+export function useXboxStats(xuid: string | null) {
+  return useQuery({
+    queryKey: queryKeys.xbox.stats(xuid ?? ''),
+    queryFn: () => xboxApi.getStats(xuid!),
+    enabled: !!xuid,
+  })
+}

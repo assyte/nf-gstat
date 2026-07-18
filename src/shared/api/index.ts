@@ -4,13 +4,17 @@ import type {
   Ayarlar,
   AktifOyun,
   MinecraftBilgi,
+  MinecraftStats,
   SteamKullanici,
   SteamOyun,
   SteamIstatistikleri,
   EpicGamesOyun,
   XboxOyun,
+  XboxStats,
   PlayStationOyun,
+  PlayStationStats,
   MicrosoftStoreOyun,
+  MicrosoftStoreStats,
   PlatformOzet,
 } from './schemas'
 
@@ -40,7 +44,7 @@ export const processApi = {
 
 export const minecraftApi = {
   getSessions: () => invoke<MinecraftBilgi[]>('minecraft_bilgisi_oku'),
-  getStats: () => invoke<unknown>('minecraft_istatistikleri'),
+  getStats: () => invoke<MinecraftStats>('minecraft_istatistikleri'),
   getModLoaders: () => invoke<string[]>('mod_loader_adlari'),
 }
 
@@ -78,7 +82,7 @@ export const xboxApi = {
     }),
   getUserInfo: (xuid: string) => invoke<unknown>('xbox_kullanici_bilgileri', { xuid }),
   getLibrary: (xuid: string) => invoke<XboxOyun[]>('xbox_kutuphane', { xuid }),
-  getStats: (xuid: string) => invoke<unknown>('xbox_istatistikler', { xuid }),
+  getStats: (xuid: string) => invoke<XboxStats>('xbox_istatistikler', { xuid }),
 }
 
 // === PlayStation API ===
@@ -91,14 +95,14 @@ export const playstationApi = {
   getLibrary: (accountId: string) =>
     invoke<PlayStationOyun[]>('ps_kutuphane', { account_id: accountId }),
   getStats: (accountId: string) =>
-    invoke<unknown>('ps_istatistikler', { account_id: accountId }),
+    invoke<PlayStationStats>('ps_istatistikler', { account_id: accountId }),
 }
 
 // === Microsoft Store API ===
 
 export const microsoftApi = {
   getLibrary: () => invoke<MicrosoftStoreOyun[]>('ms_store_kutuphane'),
-  getStats: () => invoke<unknown>('ms_store_istatistikler'),
+  getStats: () => invoke<MicrosoftStoreStats>('ms_store_istatistikler'),
 }
 
 // === Platform API ===

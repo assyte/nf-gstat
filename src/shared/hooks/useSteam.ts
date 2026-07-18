@@ -25,3 +25,11 @@ export function useSteamRecentlyPlayed(steamId: string | null, count: number = 5
     enabled: !!steamId,
   })
 }
+
+export function useSteamStats(steamId: string | null) {
+  return useQuery({
+    queryKey: queryKeys.steam.stats(steamId ?? ''),
+    queryFn: () => steamApi.getStats(steamId!),
+    enabled: !!steamId,
+  })
+}

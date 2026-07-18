@@ -8,3 +8,10 @@ export function useMicrosoftLibrary() {
     queryFn: microsoftApi.getLibrary,
   })
 }
+
+export function useMicrosoftStats() {
+  return useQuery({
+    queryKey: queryKeys.microsoft.stats,
+    queryFn: microsoftApi.getStats,
+  })
+}

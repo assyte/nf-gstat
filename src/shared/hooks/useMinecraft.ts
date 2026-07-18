@@ -17,3 +17,10 @@ export function useMinecraftModLoaders() {
     staleTime: Infinity,
   })
 }
+
+export function useMinecraftStats() {
+  return useQuery({
+    queryKey: queryKeys.minecraft.stats,
+    queryFn: minecraftApi.getStats,
+  })
+}

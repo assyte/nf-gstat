@@ -1,0 +1,29 @@
+[package]
+name = "gstat"
+version = "0.1.0"
+edition = "2021"
+description = "gStat - Game Statistics Tracker"
+authors = ["NartForge"]
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.32", features = ["bundled"] }
+sysinfo = "0.33"
+chrono = { version = "0.4", features = ["serde"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json"] }
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[lib]
+name = "gstat_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+# Linux (Arch/Garuda) derleme gereksinimleri:
+# sudo pacman -S webkit2gtk-4.1 base-devel curl wget file appmenu-gtk-module libappindicator-gtk-dev librsvg libxss glib2 gtk3
+# sudo pacman -S openssl (veya openssl-1.1)
+# sudo pacman -S libappindicator-gtk3
